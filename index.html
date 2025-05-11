@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Manajemen Pelanggaran Siswa</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-light: #4895ef;
+            --primary-dark: #3a0ca3;
+            --success: #4cc9f0;
+            --danger: #f72585;
+            --warning: #fcbf49;
+            --dark: #2b2d42;
+            --light: #f8f9fa;
+            --gray: #adb5bd;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --radius: 10px;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7ff;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+        
+        .dashboard {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            border-radius: var(--radius);
+            padding: 20px 30px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+        }
+        
+        .header-icon {
+            font-size: 2.5rem;
+            margin-right: 20px;
+        }
+        
+        .header-title h1 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .header-title p {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+        
+        .container {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .card {
+            background-color: white;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+        
+        .form-container {
+            flex: 1;
+            min-width: 320px;
+        }
+        
+        .card-header {
+            background-color: var(--primary);
+            color: white;
+            padding: 15px 20px;
+            font-size: 18px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+        }
+        
+        .card-header i {
+            margin-right: 10px;
+        }
+        
+        .card-body {
+            padding: 20px;
+        }
+        
+        .table-container {
+            flex: 2;
+            min-width: 600px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: var(--dark);
+            font-size: 14px;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #e1e5eb;
+            border-radius: var(--radius);
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+        }
+        
+        .btn {
+            display: inline-block;
+            font-weight: 500;
+            text-align: center;
+            padding: 12px 24px;
+            border: none;
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .btn-block {
+            display: block;
+            width: 100%;
+        }
+        
+        .search-container {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+        }
+        
+        .search-container .form-control {
+            flex: 1;
+        }
+        
+        .search-btn {
+            padding: 12px 20px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        thead th {
+            background-color: #f1f5fd;
+            color: var(--dark);
+            font-weight: 600;
+            text-align: left;
+            padding: 15px;
+            font-size: 14px;
+            border-bottom: 2px solid #e1e5eb;
+        }
+        
+        tbody td {
+            padding: 15px;
+            border-bottom: 1px solid #e1e5eb;
+            font-size: 14px;
+            vertical-align: middle;
+        }
+        
+        tbody tr:hover {
+            background-color: #f8f9ff;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 50px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .badge-warning {
+            background-color: rgba(252, 191, 73, 0.2);
+            color: #e09600;
+        }
+        
+        .badge-danger {
+            background-color: rgba(247, 37, 133, 0.2);
+            color: #d10d6a;
+        }
+        
+        .btn-action {
+            width: 32px;
+            height: 32px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            color: white;
+            padding: 0;
+            font-size: 12px;
+        }
+        
+        .btn-delete {
+            background-color: var(--danger);
+        }
+        
+        .btn-delete:hover {
+            background-color: #d10d6a;
+            transform: translateY(-1px);
+        }
+        
+        .no-data {
+            text-align: center;
+            padding: 30px;
+            color: var(--gray);
+            font-style: italic;
+        }
+        
+        .alert {
+            padding: 15px;
+            border-radius: var(--radius);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            animation: fadeIn 0.3s ease;
+            display: none;
+        }
+        
+        .alert-success {
+            background-color: rgba(76, 201, 240, 0.2);
+            color: #0a87a1;
+            border-left: 4px solid var(--success);
+        }
+        
+        .alert i {
+            font-size: 20px;
+            margin-right: 10px;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .pagination {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 20px;
+            list-style: none;
+        }
+        
+        .pagination li {
+            margin: 0 3px;
+        }
+        
+        .pagination li a {
+            display: flex;
+            width: 32px;
+            height: 32px;
+            align-items: center;
+            justify-content: center;
+            background-color: white;
+            color: var(--dark);
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 14px;
+            border: 1px solid #e1e5eb;
+            transition: all 0.2s ease;
+        }
+        
+        .pagination li.active a,
+        .pagination li a:hover {
+            background-color: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        
+        .actions-cell {
+            text-align: center;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 992px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            .form-container,
+            .table-container {
+                min-width: 100%;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .header-icon {
+                margin-bottom: 10px;
+                margin-right: 0;
+            }
+            
+            .search-container {
+                flex-direction: column;
+            }
+            
+            .table-responsive {
+                overflow-x: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <div class="header">
+            <div class="header-icon">
+                <i class="fas fa-shield-alt"></i>
+            </div>
+            <div class="header-title">
+                <h1>Sistem Manajemen Pelanggaran Siswa</h1>
+                <p>Kelola data pelanggaran siswa dengan mudah dan efisien</p>
+            </div>
+        </div>
+        
+        <div id="alert" class="alert alert-success">
+            <i class="fas fa-check-circle"></i>
+            <span>Data pelanggaran berhasil disimpan!</span>
+        </div>
+        
+        <div class="container">
+            <div class="form-container">
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-plus-circle"></i>
+                        Form Input Pelanggaran
+                    </div>
+                    <div class="card-body">
+                        <form id="violationForm">
+                            <div class="form-group">
+                                <label for="name" class="form-label">Nama Siswa</label>
+                                <input type="text" id="name" class="form-control" placeholder="Masukkan nama siswa" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="class" class="form-label">Kelas</label>
+                                <input type="text" id="class" class="form-control" placeholder="Contoh: XI IPA 1" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="parentPhone" class="form-label">No. HP Orang Tua</label>
+                                <input type="tel" id="parentPhone" class="form-control" placeholder="Contoh: 08123456789" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="violation" class="form-label">Keterangan Pelanggaran</label>
+                                <input type="text" id="violation" class="form-control" placeholder="Jelaskan pelanggaran yang dilakukan" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="violationCount" class="form-label">Jumlah Pelanggaran</label>
+                                <input type="number" id="violationCount" class="form-control" min="1" value="1" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="date" class="form-label">Tanggal Kejadian</label>
+                                <input type="date" id="date" class="form-control" required>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary btn-block">
+                                <i class="fas fa-save"></i> Simpan Data
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="table-container">
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-list"></i>
+                        Data Pelanggaran Siswa
+                    </div>
+                    <div class="card-body">
+                        <div class="search-container">
+                            <input type="text" id="searchInput" class="form-control" placeholder="Cari nama siswa...">
+                            <button onclick="searchData()" class="btn btn-primary search-btn">
+                                <i class="fas fa-search"></i> Cari
+                            </button>
+                            <button onclick="showAllData()" class="btn btn-primary search-btn">
+                                <i class="fas fa-sync-alt"></i> Semua
+                            </button>
+                        </div>
+                        
+                        <div class="table-responsive">
+                            <table id="violationTable">
+                                <thead>
+                                    <tr>
+                                        <th>No</th>
+                                        <th>Nama</th>
+                                        <th>Kelas</th>
+                                        <th>No. HP Ortu</th>
+                                        <th>Pelanggaran</th>
+                                        <th>Jumlah</th>
+                                        <th>Tanggal</th>
+                                        <th>Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="violationData">
+                                    <tr class="no-data">
+                                        <td colspan="8">Belum ada data pelanggaran</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <ul class="pagination">
+                            <li><a href="#"><i class="fas fa-angle-left"></i></a></li>
+                            <li class="active"><a href="#">1</a></li>
+                            <li><a href="#">2</a></li>
+                            <li><a href="#">3</a></li>
+                            <li><a href="#"><i class="fas fa-angle-right"></i></a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Data pelanggaran siswa
+        let violations = [];
+        let displayedViolations = [];
+        
+        // Fungsi untuk menampilkan tanggal dalam format Indonesia
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('id-ID', {
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric'
+            });
+        }
+        
+        // Fungsi untuk menampilkan data di tabel
+        function renderTable() {
+            const tableBody = document.getElementById('violationData');
+            
+            // Jika tidak ada data yang ditampilkan
+            if (displayedViolations.length === 0) {
+                tableBody.innerHTML = '<tr class="no-data"><td colspan="8">Belum ada data pelanggaran</td></tr>';
+                return;
+            }
+            
+            let tableContent = '';
+            
+            displayedViolations.forEach((item, index) => {
+                // Menentukan badge class berdasarkan jumlah pelanggaran
+                let badgeClass = item.violationCount > 2 ? 'badge-danger' : 'badge-warning';
+                
+                tableContent += `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td>${item.name}</td>
+                        <td>${item.class}</td>
+                        <td>${item.parentPhone}</td>
+                        <td>${item.violation}</td>
+                        <td><span class="badge ${badgeClass}">${item.violationCount}</span></td>
+                        <td>${formatDate(item.date)}</td>
+                        <td class="actions-cell">
+                            <button class="btn btn-action btn-delete" onclick="deleteViolation(${index})" title="Hapus">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            tableBody.innerHTML = tableContent;
+        }
+        
+        // Fungsi untuk menyimpan data ke local storage
+        function saveToLocalStorage() {
+            localStorage.setItem('violationData', JSON.stringify(violations));
+        }
+        
+        // Fungsi untuk memuat data dari local storage
+        function loadFromLocalStorage() {
+            const savedData = localStorage.getItem('violationData');
+            if (savedData) {
+                violations = JSON.parse(savedData);
+                displayedViolations = [...violations];
+                renderTable();
+            }
+        }
+        
+        // Fungsi untuk menghapus data pelanggaran
+        function deleteViolation(index) {
+            if (confirm('Apakah Anda yakin ingin menghapus data ini?')) {
+                const actualIndex = violations.findIndex(v => v === displayedViolations[index]);
+                if (actualIndex !== -1) {
+                    violations.splice(actualIndex, 1);
+                    saveToLocalStorage();
+                }
+                displayedViolations.splice(index, 1);
+                renderTable();
+            }
+        }
+        
+        // Fungsi untuk mencari data berdasarkan nama
+        function searchData() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            
+            if (searchTerm.trim() === '') {
+                displayedViolations = [...violations];
+            } else {
+                displayedViolations = violations.filter(item => 
+                    item.name.toLowerCase().includes(searchTerm)
+                );
+            }
+            
+            renderTable();
+        }
+        
+        // Fungsi untuk menampilkan semua data
+        function showAllData() {
+            document.getElementById('searchInput').value = '';
+            displayedViolations = [...violations];
+            renderTable();
+        }
+        
+        // Event listener untuk form submission
+        document.getElementById('violationForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Mengambil nilai dari form
+            const name = document.getElementById('name').value;
+            const className = document.getElementById('class').value;
+            const parentPhone = document.getElementById('parentPhone').value;
+            const violation = document.getElementById('violation').value;
+            const violationCount = parseInt(document.getElementById('violationCount').value);
+            const date = document.getElementById('date').value;
+            
+            // Membuat objek data baru
+            const newViolation = {
+                name,
+                class: className,
+                parentPhone,
+                violation,
+                violationCount,
+                date
+            };
+            
+            // Menambahkan data baru ke array
+            violations.push(newViolation);
+            displayedViolations = [...violations];
+            
+            // Menyimpan ke local storage
+            saveToLocalStorage();
+            
+            // Menampilkan data di tabel
+            renderTable();
+            
+            // Reset form
+            this.reset();
+            document.getElementById('violationCount').value = '1';
+            
+            // Menampilkan alert
+            const alert = document.getElementById('alert');
+            alert.style.display = 'flex';
+            setTimeout(() => {
+                alert.style.display = 'none';
+            }, 3000);
+        });
+        
+        // Memuat data saat halaman dimuat
+        window.addEventListener('DOMContentLoaded', function() {
+            loadFromLocalStorage();
+            
+            // Set tanggal hari ini sebagai default
+            const today = new Date();
+            const formattedDate = today.toISOString().substr(0, 10);
+            document.getElementById('date').value = formattedDate;
+        });
+        
+        // Fungsi pagination (simulasi)
+        document.querySelectorAll('.pagination li a').forEach(function(item) {
+            item.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.querySelectorAll('.pagination li').forEach(function(li) {
+                    li.classList.remove('active');
+                });
+                this.parentElement.classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>
